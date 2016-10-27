@@ -1,0 +1,14 @@
+317bad02db12ba2340b5c4ef30c9376b  usr/lib/systemd/system/keepalive.service
+5aa43c0360a508ad909cfe2ac4495179  etc/keepalive/packaging.txt
+76803e4e6e9f74fc8de2ae4ddfc7c470  etc/keepalive/bin/keepalive
+4e750e3f9ce8e00feaa34d614405f066  etc/keepalive/keepalive.conf
+5c34e36e9838a29d59f3ed9fa0b4c8e7  etc/keepalive/docs/debian/postinst
+061b27636d5dd3ab9ca7fa00b5a6e0a6  etc/keepalive/docs/debian/control
+391dcefa7356b76dfdc7eebae9e450ba  etc/keepalive/docs/debian/postrm
+eb54ab3395cf1a7f9ffd558b5142679d  etc/keepalive/docs/debian/prerm
+2a7ad29f5f70879eca2d71a01152ac19  etc/keepalive/docs/debian/preinst
+7b84e6ef73c48a2474789f8daf76a8d7  etc/keepalive/docs/debian/conffiles
+7c2ef5667400f3fa3166bbfe41a835e2  etc/keepalive/docs/keepalive.spec
+ec2f0bc9c707cb03aa933d203e1506ef  etc/keepalive/README.txt
+cf972826834f5cce6d48266bc9f18110  etc/logrotate.d/keepalive
+3b4332e514014ed750012692a75dc572  etc/rsyslog.d/keepalivelog.conf

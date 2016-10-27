@@ -1,0 +1,24 @@
+# File: /usr/lib/systemd/system/keepalive.service
+#       when enabled, /etc/systemd/system/keepalive.service
+# bgstack15@gmail.com 2016-07-22
+# Part of a keepalive package that might become a puppet module
+[Unit]
+Description=keepalive
+DefaultDependencies=no
+Requires=network.target sssd.service
+After=network.target sssd.service
+
+ConditionPathExists=/etc/krb5.keytab
+ConditionPathExists=/usr/bin/keepalive
+
+[Service]
+Type=simple
+User=root
+ExecStart=/etc/keepalive/bin/keepalive
+Restart=on-abort
+StandardOutput=syslog
+StandardError=syslog
+ExecStopPost=/etc/keepalive/bin/keepalive --clean
+
+[Install]
+WantedBy=multi-user.target

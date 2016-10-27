@@ -1,0 +1,53 @@
+File: etc/keepalive/packaging.txt
+Package: keepalive
+Author: bgstack15
+Startdate: 2016-06-02
+Title: Packaging instructions for keepalive
+Purpose: To make it easier to build the package
+History: 2016-10-27 updated for git project
+Usage:
+Reference: bgscripts package packaging.txt
+Improve:
+Document: Below this line
+
+### PACKAGING for rhel/centos
+package=keepalive
+version=1.0-6
+shortversion=1.0
+rpmbuilddir=~/rpmbuild/
+packagespecfile="${package}-${version}/etc/${package}/docs/${package}.spec"
+sed -i -n '1,/^\%files$/p;' ${rpmbuilddir}/SOURCES/"${packagespecfile}"
+cd ${rpmbuilddir}/SOURCES/"${package}-${version}"
+find * ! -type d ! -regex '.*?.swp' ! -regex '.*?DEBIAN.*?' | sed -e 's/^/\//;' -e 's/\(.*\.txt\)/%doc %attr(444, -, -) \1/;' -e 's/\(.*\.conf\)/%config \1/;' -e 's/\(.*bin.*\)/%verify(link) \1/;' -e 's/\(.*\)\.py$/\1\.py\n\1\.pyc\n\1\.pyo/;' >> ${rpmbuilddir}/SOURCES/"${packagespecfile}"
+rm -rf ${rpmbuilddir}/SOURCES/"${package}-${shortversion}"
+cp -prf ${rpmbuilddir}/SOURCES/"${package}-${version}" ${rpmbuilddir}/SOURCES/"${package}-${shortversion}"
+rm -rf ${rpmbuilddir}/SOURCES/"${package}-${shortversion}"/DEBIAN
+cd ${rpmbuilddir}/SOURCES
+rm -rf "${package}".tgz; tar -zc --exclude='.git' -f "${package}.tgz" "${package}-${shortversion}" && rm -rf ${rpmbuilddir}/SOURCES/"${package}-${shortversion}"
+cp -p ${rpmbuilddir}/SOURCES/"${packagespecfile}" ${rpmbuilddir}/SPECS
+cd ${rpmbuilddir}/RPMS/noarch
+rpmbuild -bb "${rpmbuilddir}"/SPECS/"${package}".spec
+
+### PACKAGING for debian
+# You need package dpkg-dev to build packages.
+package=keepalive
+version=1.0-6
+packagedebfilesdir="${package}-${version}/etc/keepalive/docs/debian"
+cd ~/deb/"${package}-${version}"
+find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' ! -regex '.*?.swp' ! -regex '.*\.git.*' -printf '%P ' | xargs md5sum > DEBIAN/md5sums
+rm -rf ~/deb/"${package}-${version}"/DEBIAN/ 2>/dev/null; mkdir -p ~/deb/"${package}-${version}"/DEBIAN/
+cp -pf ~/deb/"${packagedebfilesdir}"/* ~/deb/"${package}-${version}"/DEBIAN/
+cd ~/deb
+rm -rf ~/deb/"${package}-${version}.a"
+cp -pR ~/deb/"${package}-${version}" ~/deb/"${package}-${version}.a"
+rm -rf ~/deb/"${package}-${version}"/.git
+dpkg-deb -b ~/deb/"${package}-${version}"
+rm -rf ~/deb/"${package}-${version}"
+mv ~/deb/"${package}-${version}.a" ~/deb/"${package}-${version}"
+
+### PACKAGING in a master.tgz
+cd ~/deb 2>/dev/null || cd ~/rpmbuild/SOURCES
+package=keepalive
+version=1.0-6
+rm -rf ./"${package}-${version}".master.tgz
+tar -zcf "${package}-${version}".master.tgz "${package}-${version}"/

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# whether removing an updated package or just removing it entirely, this is a good idea:
+systemctl daemon-reload 1>/dev/null 2>&1

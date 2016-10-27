@@ -1,0 +1,251 @@
+#!/usr/bin/python3 -u
+# File: /etc/keepalive/bin/keepalive
+# Author: bgstack15@gmail.com
+# Startdate: 2016-07-20
+# Title: Keepalive Script in Python
+# Purpose: To perform keepalive functionality in python. This is mostly a learning exercise in python.
+# History: 2016-07-21 Basic, hard-coded functionality working
+# Usage:
+# Reference:
+#    keepalive-1.0-4 /etc/keepalive/bin/keepalive (shell script)
+#    http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python#14981125
+#    signals: /usr/include/x86_64-linux-gnu/bits/signum.h
+#    https://docs.python.org/3/library/atexit.html
+#    http://www.tutorialspoint.com/python/python_command_line_arguments.htm
+#    https://docs.python.org/2/library/argparse.html#module-argparse
+#    http://stackoverflow.com/questions/15848674/how-to-configparse-a-file-keeping-multiple-values-for-identical-keys
+#    python3 -u from http://stackoverflow.com/questions/13069634/python-daemon-and-systemd-service#30189540
+# Improve:
+#  x Add config parsing
+#  x Add argument parsing
+#    Do internal web calls instead of using curl (optional)
+#    Add debug info
+
+#from __future__ import print_function
+import sys, os, socket, subprocess, re, time, platform
+#import requests, requests_kerberos
+import signal, atexit
+import argparse, configparser
+from collections import OrderedDict
+
+keepaliveversion="2016-07-22b"
+
+class MultiOrderedDict(OrderedDict):
+    def __setitem__(self, key, value):
+        if isinstance(value, list) and key in self:
+            self[key].extend(value)
+        else:
+            super(OrderedDict, self).__setitem__(key, value)
+   #Reference: http://stackoverflow.com/questions/15848674/how-to-configparse-a-file-keeping-multiple-values-for-identical-keys
+
+def usage():
+   # now with argparse, this usage command is never used. It will be removed in a future version.
+   usage_string="""
+usage: keepalive [-duV] [-k <keytab>] [-r <refreshvalue>] [-i <infile1>]
+version """+keepaliveversion+"""
+ -d debug     Show debugging info, including parsed variables.
+ -u usage     Show this usage block.
+ -V version   Show script version number.
+ -k keytab    Overrides default keytab value. Default is """+keytab+"""
+ -i infile    Overrides default infile value. Default is """+infile1+"""
+ -r refresh   Overrides default wait time between checks. Default is """+str(refresh)+"""
+usage: keepalive out
+     Will log out of the proxy and exit
+Return values:
+0 Normal
+1 Help or version info displayed
+2 Could not start: could be already running, bad lockfile, bad keytab
+3 Incorrect OS type
+4 Unable to find dependency
+5 Not run as root or sudo
+"""
+   print(usage_string,file=sys.stderr)
+
+# DEFINE FUNCTIONS
+
+def klog(*s, **kwargs):
+   print(*s, file=sys.stderr, **kwargs)
+   # Ref: http://stackoverflow.com/questions/5574702/how-to-print-to-stderr-in-python#14981125
+
+def proxylogout(*logoutproxies):
+   try:
+      for word in logoutproxies:
+         subprocess.call(["/usr/bin/curl","-s","-o","/dev/null",word],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+   except BaseException as e:
+      # no proxies, so use default
+      subprocess.call(["/usr/bin/curl","-s","-o","/dev/null","http://proxylogout.example.com"],stdout=subprocess.DEVNULL,stderr=subprocess.DEVNULL)
+
+# DEFINE TRAPS
+
+def clean_keepalive(*reason):
+   thisreason=""
+   try:
+      thisreason=reason[0]
+   except BaseException as e:
+      thisreason="manual"
+
+   if thisreason == "normal":
+      klog("exiting at end of procedural run. This should not happen in production.")
+   elif thisreason == "clean":
+      # be silent because only doing the systemd unit ExecStopPost cleanup
+      pass
+   else:
+      klog("stopped by user")
+
+   try:
+      os.remove(lockfile)
+   except BaseException as e:
+      pass
+
+def CTRLC(signum=signal.SIGQUIT, frame=""):
+   print("This is CTRLC function")
+   sys.exit(1)
+
+def CTRLZ(signum=signal.SIGQUIT, frame=""):
+   print("This is CTRLZ")
+   sys.exit(2)
+
+# INITIALIZE VARIABLES
+servercaps=socket.gethostname().upper().split('.',1)[0]
+thisflavor=platform.dist()[0].lower()
+thisversion=platform.dist()[1]
+infile1="/etc/keepalive/keepalive.conf"
+
+# DEFAULT VARIABLES that can be adjusted by keepalive.conf
+lockfile="/tmp/.keepalive.py.lock"
+keytab="/etc/krb5.keytab"
+refresh=4
+proxies=[]
+proxies.append("https://proxy1.example.com:4433/?cfru=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8=")
+proxies.append("https://proxy2.example.com:4433/?cfru=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8=")
+logoutproxies=[]
+logoutproxies.append("http://proxylogout.example.com")
+
+# PARSE ARGUMENTS
+# Reference: https://docs.python.org/2/library/argparse.html#module-argparse
+parser = argparse.ArgumentParser(description="keep this host logged into the proxy")
+parser.add_argument("-d","--debug",help="enables debugging",action="store_true")
+parser.add_argument("-V","--version",help="",action="store_true")
+parser.add_argument("-k","--keytab",help="Overrides default keytab value",default="")
+parser.add_argument("-i","--infile","--inputfile",help="use a specific conf file",default="")
+parser.add_argument("-r","--refresh",type=int,help="Overrides default wait time",default=0)
+parser.add_argument("--out",action="store_true")
+parser.add_argument("--clean",action="store_true",help="")
+args = parser.parse_args()
+debug=0
+logoutonly=False
+cleanonly=False
+if args.debug: debug=1
+if args.version:
+   print("keepalive version",keepaliveversion)
+   sys.exit(0)
+if len(args.keytab) > 0: keytab=args.keytab
+if args.refresh > 0: refresh=args.refresh
+if len(args.infile) > 0: infile1=args.infile
+if args.out: logoutonly=True
+if args.clean: cleanonly=True
+
+# REACT TO OPERATING SYSTEM FLAVOR
+# this is different from the older shell keepalive, which relied on SYSTEM TYPE
+if thisflavor == "ubuntu" or thisflavor == "debian":
+   pass
+elif thisflavor == "centos" or thisflavor == "redhat":
+   pass
+else:
+   print("keepalive: 3. Unknown flavor:",thisflavor + ".","Aborted.",file=sys.stderr)
+   sys.exit(3)
+
+# REACT TO ROOT STATUS
+if os.geteuid() != 0:
+   print("keepalive: 5. Please run as root or sudo. Aborted.",file=sys.stderr)
+   sys.exit(5)
+
+# IF LOGOUT ONLY
+if logoutonly:
+   proxylogout(logoutproxies)
+   sys.exit(0)
+
+# IF CLEAN ONLY
+if cleanonly:
+   clean_keepalive("clean")
+   sys.exit(0)
+
+# READ CONFIG FILE stub
+if not os.path.isfile(infile1):
+   klog("4. Cannot find conf",infile1 + ".","Using defaults.")
+else:
+   # read config file here
+   config=configparser.RawConfigParser(dict_type=MultiOrderedDict,strict=False)
+   #config['keepalive']={'lockfile': '/tmp/.keepalive.py.lock',
+   #                     'keytab': '/etc/krb5.keytab',
+   #                     'refresh': '240',
+   #                     'proxy': 'https://proxy1.example.com:4433/?cfru=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8=',
+   #                     'proxy': 'https://proxy2.example.com:4433/?cfru=aHR0cHM6Ly93d3cuZ29vZ2xlLmNvbS8='}
+   config.read(infile1)
+   # use the options from the config file
+   if len(config['keepalive']['lockfile'][0]) > 0: lockfile=config['keepalive']['lockfile'][0]
+   if len(config['keepalive']['keytab']) > 0: keytab=config['keepalive']['keytab'][0]
+   if len(config['keepalive']['refresh']) > 0: refresh=int(config['keepalive']['refresh'][0])
+   if len(config['keepalive']['proxy']) > 0:
+      proxies.clear()
+   else:
+      #no proxies configured! I guess we will leave the defaults in place then
+      pass
+   for word in config['keepalive']['proxy']: proxies.append(word)
+   if len(config['keepalive']['logoutproxy']) > 0:
+      logoutproxies.clear()
+   else:
+      # no logoutproxies configured! Leave the defaults in place
+      pass
+   for word in config['keepalive']['logoutproxy']: logoutproxies.append(word)
+
+# CREATE LOCKFILE ONLY IF IT DOES NOT EXIST
+if os.path.isfile(lockfile) == False:
+   lockf=open(lockfile,'w')
+   lockf.write(str(os.getpid()))
+   lockf.close()
+else:
+   klog("2. Could not create lockfile",lockfile + ".","Aborted.")
+   sys.exit(2)
+
+# EXIT IF KEYTABFILE IS INVALID
+if not os.path.isfile(lockfile):
+   klog("2. Could not find keytab",keytab + ".","Aborted.")
+   sys.exit(2)
+
+atexit.register(clean_keepalive)
+
+# works but not needed
+#signal.signal(signal.SIGINT, CTRLC)
+#signal.signal(signal.SIGCONT, CTRLZ)
+# Consider this research. Consider using 19 "SIGSTOP" which occurs at start of the interrupt-and-stop-job I think
+
+# MAIN LOOP
+a=False
+while a==False:
+   proxylogout(logoutproxies)
+
+   # Ensure kerberos ticket exists
+   try:
+      b=str(subprocess.check_output("klist",stderr=subprocess.DEVNULL))
+   except BaseException as e:
+      b=""
+      
+   p = re.compile('.*principal: '+servercaps)
+   if p.match(b):
+      klog("valid ticket found")
+   else:
+      subprocess.call("kdestroy")
+      klog("requesting new ticket")
+      subprocess.call(["kinit","-kt",keytab,servercaps+"$"])
+
+   # So with valid kerberos ticket, perform actions against all proxies
+   for proxy in proxies:
+      subprocess.call(["/usr/bin/curl","-s","-o","/dev/null","--negotiate","-u:ignoreMe","-b","~/ProxyCookies.txt","-c","~/ProxyCookies.txt",proxy])
+      #print(proxy)
+
+   time.sleep(refresh)
+# END MAIN LOOP
+
+atexit.unregister(clean_keepalive)
+clean_keepalive("normal")

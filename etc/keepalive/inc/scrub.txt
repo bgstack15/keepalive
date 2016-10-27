@@ -1,0 +1,14 @@
+# First line: source directory		Second line: target directory. WILL BE OVERWRITTEN!
+/home/bgstack15/rpmbuild/SOURCES/keepalive-1.0-6
+/home/work/keepalive.clean
+# rest of the lines are "OLD WORD" "NEW WORD"
+BGSTACK15	BGSTACK15
+Bgstack15	Bgstack15
+bgstack15 bgstack15
+example	example
+EXAMPLE	EXAMPLE
+".com"	".com"
+"203.0."		"203.0."
+one	one
+Alice	Alice
+User1	User1

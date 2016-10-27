@@ -1,0 +1,11 @@
+# File: /etc/logrotate.d/keepalive
+# bgstack15@gmail.com 2015-11-11
+/var/log/keepalive.log {
+    weekly
+    missingok
+    notifempty
+    rotate 2
+    compress
+    maxage 7
+    create 0644 root root
+}
