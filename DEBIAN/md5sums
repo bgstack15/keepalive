@@ -6,12 +6,12 @@ adefd79b5811411168ed1f2f6fdcbd75  usr/share/keepalive/inc/scrub.txt
 bb88e3775cdf8c6c4dd3e6bfb0c5ab0a  usr/share/keepalive/inc/pack
 18f43a619fa8dd77a6c3c37b8465f988  usr/share/keepalive/inc/localize_git.sh
 7ef7280c69b6ebf930cd2615879b367f  usr/share/keepalive/docs/debian-keepalive/postinst
-91c538a1900016ae9e50eb66506854b0  usr/share/keepalive/docs/debian-keepalive/control
+8cc05f8c23aae4e63df223d24e8d0c43  usr/share/keepalive/docs/debian-keepalive/control
 6f7872e580c56fc1d2f3ed5e1a88bf24  usr/share/keepalive/docs/debian-keepalive/postrm
 7486860c224066fe829c5ec7f4a272be  usr/share/keepalive/docs/debian-keepalive/prerm
 0f39f7cbe97b762dbfbf6e46b2a62f39  usr/share/keepalive/docs/debian-keepalive/changelog
 c38dd889802671d0703a35b1dffbcd04  usr/share/keepalive/docs/debian-keepalive/preinst
-9212c79d73d7d2e339f4d1ed5fc6fb00  usr/share/keepalive/docs/debian-keepalive/md5sums
+40278ec59a30c3432ec2065e21e74e28  usr/share/keepalive/docs/debian-keepalive/md5sums
 7b84e6ef73c48a2474789f8daf76a8d7  usr/share/keepalive/docs/debian-keepalive/conffiles
 acf89298e2b6dc098461f296d4187f54  usr/share/keepalive/docs/files-for-versioning.txt
 7610bdce2e5e8919633e3052c5391beb  usr/share/keepalive/docs/README.txt
