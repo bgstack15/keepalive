@@ -1,0 +1,6 @@
+inc/localize_git.sh
+inc/scrub.txt
+docs/README.txt
+docs/packaging.txt
+docs/keepalive.spec
+docs/debian/control

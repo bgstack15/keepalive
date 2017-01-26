@@ -14,11 +14,11 @@ ConditionPathExists=/usr/bin/keepalive
 [Service]
 Type=simple
 User=root
-ExecStart=/etc/keepalive/bin/keepalive
+ExecStart=/usr/share/keepalive/keepalive
 Restart=on-abort
 StandardOutput=syslog
 StandardError=syslog
-ExecStopPost=/etc/keepalive/bin/keepalive --clean
+ExecStopPost=/usr/share/keepalive/keepalive --clean
 
 [Install]
 WantedBy=multi-user.target

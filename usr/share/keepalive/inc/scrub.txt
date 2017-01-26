@@ -1,0 +1,22 @@
+# for scrubpyversion 2016-11-16a or newer
+source /home/bgstack15/rpmbuild/SOURCES/keepalive-1.0-7
+target /home/work/keepalive.clean
+ignore "tgz png gif jpg pyc pyo git swp ico"
+# rest of the lines are "OLD WORD" "NEW WORD"
+BGSTACK15	BGSTACK15
+Bgstack15	Bgstack15
+bgstack15 bgstack15
+Bname	Bname
+bname	bname
+Stack15	Stack15
+stack15	stack15
+EXAMPLE	EXAMPLE
+example	example
+".com"	".com"
+"203.0."		"203.0."
+one	one
+Alice	Alice
+User1	User1
+SMITH123	SMITH123
+Smith123	Smith123
+smith123	smith123

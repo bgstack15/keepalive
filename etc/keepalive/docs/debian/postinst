@@ -1,5 +1,0 @@
-#!/bin/sh
-
-systemctl daemon-reload 1>/dev/null 2>&1
-systemctl enable keepalive 1>/dev/null 2>&1
-systemctl start keepalive 1>/dev/null 2>&1

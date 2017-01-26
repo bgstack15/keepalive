@@ -1,5 +1,5 @@
 Package: keepalive
-Version: 1.0-6
+Version: 1.0-7
 Architecture: all
 Essential: no
 Priority: extra
@@ -9,5 +9,6 @@ Installed-Size: 350
 Homepage: https://bgstack15.wordpress.com/
 Source: keepalive.tgz
 Pre-Depends: bgscripts (>= 1.1-17), sssd, python3
+Depends: curl
 Description: Keepalive uses a system kerberos ticket (generating one if necessary) to stay authenticated to the http proxy.
  The user defines http_proxy and https_proxy. Keepalive assumes the system joined to an AD domain.

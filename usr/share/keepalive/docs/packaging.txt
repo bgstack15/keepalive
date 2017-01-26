@@ -12,7 +12,7 @@ Document: Below this line
 
 ### PACKAGING for rhel/centos
 package=keepalive
-version=1.0-6
+version=1.0-7
 shortversion=1.0
 rpmbuilddir=~/rpmbuild/
 packagespecfile="${package}-${version}/etc/${package}/docs/${package}.spec"
@@ -31,7 +31,7 @@ rpmbuild -bb "${rpmbuilddir}"/SPECS/"${package}".spec
 ### PACKAGING for debian
 # You need package dpkg-dev to build packages.
 package=keepalive
-version=1.0-6
+version=1.0-7
 packagedebfilesdir="${package}-${version}/etc/keepalive/docs/debian"
 cd ~/deb/"${package}-${version}"
 find . -type f ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' ! -regex '.*?DEBIAN.*' ! -regex '.*?.swp' ! -regex '.*\.git.*' -printf '%P ' | xargs md5sum > DEBIAN/md5sums
@@ -48,6 +48,6 @@ mv ~/deb/"${package}-${version}.a" ~/deb/"${package}-${version}"
 ### PACKAGING in a master.tgz
 cd ~/deb 2>/dev/null || cd ~/rpmbuild/SOURCES
 package=keepalive
-version=1.0-6
+version=1.0-7
 rm -rf ./"${package}-${version}".master.tgz
 tar -zcf "${package}-${version}".master.tgz "${package}-${version}"/

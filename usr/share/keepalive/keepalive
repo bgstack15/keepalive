@@ -5,6 +5,7 @@
 # Title: Keepalive Script in Python
 # Purpose: To perform keepalive functionality in python. This is mostly a learning exercise in python.
 # History: 2016-07-21 Basic, hard-coded functionality working
+#    2017-01-26 moved main package contents to /usr/share/keepalive to be FHS 3.0-compliant
 # Usage:
 # Reference:
 #    keepalive-1.0-4 /etc/keepalive/bin/keepalive (shell script)
@@ -28,7 +29,7 @@ import signal, atexit
 import argparse, configparser
 from collections import OrderedDict
 
-keepaliveversion="2016-07-22b"
+keepaliveversion="2017-01-26a"
 
 class MultiOrderedDict(OrderedDict):
     def __setitem__(self, key, value):

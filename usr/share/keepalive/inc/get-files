@@ -1,0 +1,45 @@
+#!/bin/sh
+# File: get-files
+case "${1}" in
+   rpm)
+
+### for rpm
+find * -type d \
+   \( \
+      -regex 'usr\/share\/keepalive.*' -o \
+      -regex '.*\/keepalive$' \
+   \) \
+   | sed -e 's/^/%dir \//;'
+find * -mindepth 1 ! -type d ! -regex '.*?.swp' \
+   ! -regex '.*?DEBIAN.*?' \
+   | sed -e '
+s/^/\//;
+s/\(.*\.txt\)/%doc %attr(444, -, -) \1/;
+s/\(.*\.conf\)/%config \1/;
+s/\(.*bin.*\)/%verify(link) \1/;
+s/\(.*\)\.py$/\1\.py\n\1\.pyc\n\1\.pyo/;
+'
+
+      ;;
+   deb)
+
+### for deb
+# will be redirected to md5sum
+# WORKHERE: this is the bgscripts one
+find . -mindepth 1 \
+   ! -type d \
+   ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' \
+   ! -regex '.*?DEBIAN.*' ! -regex '.*?.swp' ! -regex '.*\.git.*' \
+   \( \
+      -regex '.*rdp.*' -o \
+      -regex '.*get-files$' -o \
+      -regex '.*icons.*' \
+   \) \
+   -printf '%P '
+
+      ;;
+   *)
+      echo "FATAL ERROR: check ./pack or get-files. Please use [ rpm | deb ] option. Aborted." 1>&2
+      exit 1
+      ;;
+esac

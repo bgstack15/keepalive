@@ -1,5 +1,5 @@
 File: etc/keepalive/README.txt
-Package: keepalive 1.0-6
+Package: keepalive 1.0-7
 Author: bgstack15@gmail.com
 Startdate: 2016-06-07
 Title: Readme file for keepalive
@@ -14,6 +14,8 @@ Document: Below this line
 To use the keepalive program, start the service.
 systemctl start keepalive.service
 
+### REFERENCE
+
 ### CHANGELOG
 keepalive 1.0-4 2016-06-07
 Changed packaging so bgscripts is a prerequisite, not a corequisite package so framework.sh exists before keepalive service is started for the first time.
@@ -26,5 +28,3 @@ Rewrote the application in python3
 2016-10-27 keepalive 1.0-6
 Added scrub.py subpackage
 Modified to be suitable for sharing on github
-
-### REFERENCE
