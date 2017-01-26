@@ -25,16 +25,12 @@ s/\(.*\)\.py$/\1\.py\n\1\.pyc\n\1\.pyo/;
 
 ### for deb
 # will be redirected to md5sum
-# WORKHERE: this is the bgscripts one
 find . -mindepth 1 \
    ! -type d \
+   ! -regex '.*README\.md.*' \
    ! -regex '.*.hg.*' ! -regex '.*?debian-binary.*' \
-   ! -regex '.*?DEBIAN.*' ! -regex '.*?.swp' ! -regex '.*\.git.*' \
-   \( \
-      -regex '.*rdp.*' -o \
-      -regex '.*get-files$' -o \
-      -regex '.*icons.*' \
-   \) \
+   ! -regex '.*?DEBIAN.*' ! -regex '.*?.swp' \
+   ! -regex '.*\.git.*' \
    -printf '%P '
 
       ;;

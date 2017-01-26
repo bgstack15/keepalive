@@ -1,5 +1,10 @@
 #!/bin/sh
+# deb postinst 2017-01-26
+thisservice=keepalive.service
+{
+systemctl daemon-reload
+systemctl enable ${thisservice}
+systemctl start ${thisservice}
+} 1>/dev/null 2>&1
 
-systemctl daemon-reload 1>/dev/null 2>&1
-systemctl enable keepalive 1>/dev/null 2>&1
-systemctl start keepalive 1>/dev/null 2>&1
+exit 0

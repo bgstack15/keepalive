@@ -85,26 +85,27 @@ exit 0
 %dir /etc/keepalive
 %dir /usr/share/keepalive
 %dir /usr/share/keepalive/docs
-%dir /usr/share/keepalive/docs/debian
+%dir /usr/share/keepalive/docs/debian-keepalive
 %dir /usr/share/keepalive/inc
 /etc/logrotate.d/keepalive
 %config /etc/rsyslog.d/keepalivelog.conf
 %config /etc/keepalive/keepalive.conf
 /usr/share/keepalive/keepalive.sh
 /usr/share/keepalive/docs/keepalive.spec
-/usr/share/keepalive/docs/debian/postinst
-/usr/share/keepalive/docs/debian/conffiles
-/usr/share/keepalive/docs/debian/md5sums
-/usr/share/keepalive/docs/debian/prerm
-/usr/share/keepalive/docs/debian/postrm
-/usr/share/keepalive/docs/debian/control
-/usr/share/keepalive/docs/debian/preinst
 %doc %attr(444, -, -) /usr/share/keepalive/docs/README.txt
-%doc %attr(444, -, -) /usr/share/keepalive/docs/packaging.txt
+/usr/share/keepalive/docs/debian-keepalive/postinst
+/usr/share/keepalive/docs/debian-keepalive/conffiles
+/usr/share/keepalive/docs/debian-keepalive/md5sums
+/usr/share/keepalive/docs/debian-keepalive/changelog
+/usr/share/keepalive/docs/debian-keepalive/prerm
+/usr/share/keepalive/docs/debian-keepalive/postrm
+/usr/share/keepalive/docs/debian-keepalive/control
+/usr/share/keepalive/docs/debian-keepalive/preinst
 %doc %attr(444, -, -) /usr/share/keepalive/docs/files-for-versioning.txt
 /usr/share/keepalive/inc/get-files
 /usr/share/keepalive/inc/pack
 /usr/share/keepalive/inc/localize_git.sh
+%config /usr/share/keepalive/inc/keepalive.conf
 %doc %attr(444, -, -) /usr/share/keepalive/inc/scrub.txt
 /usr/share/keepalive/keepalive
 /usr/lib/systemd/system/keepalive.service
@@ -113,6 +114,7 @@ exit 0
 %changelog
 * Thu Jan 26 2017 B Stack <bgstack15@gmail.com> 1.0-7
 - Rearranged package to be compliant with FHS 3.0
-- Updated dependency to bgscripts-core
-- Added ./pack script
-- Added changelog to spec file
+- Updated dependency to bgscripts-core.
+- Added ./pack script.
+- Removed old packaging.txt file entirely.
+- Added changelog to spec file.

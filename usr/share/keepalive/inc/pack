@@ -77,21 +77,18 @@ rm -rf "${rpmbuilddir}/SOURCES/${package}-${shortversion}/" "${rpmbuilddir}/SOUR
 # if you copy-paste this, be sure to define package, version
 debdir=~/deb
 debiandirmain="${package}-${version}/usr/share/${package}/docs/debian-${package}"
-cd "${debdir}/${package}-${version}/usr/bin"
-for word in beep bup fl lecho newscript plecho rdp send treesize; do ln -sf ../share/bgscripts/${word}.sh ${word}; done
-for word in dli updateval; do ln -sf ../share/bgscripts/${word}.py ${word}; done
-ln -sf ../share/bgscripts/bgscripts.bashrc bp
 cd "${debdir}/${package}-${version}"
 "${debdir}/${package}-${version}/usr/share/${package}/inc/get-files" deb | xargs md5sum > "${debdir}/${debiandirmain}/md5sums"
-cd ~/deb
-mv "${debdir}/${package}-${version}/.git" "${debdir}/.git$$"
+cd "${debdir}/${package}-${version}"
+mv .git "../.git$$"; mv README.md "../README.md$$"
 
 # main
 rm -rf "${debdir}/${package}-${version}/DEBIAN/" 2>/dev/null; mkdir -p "${debdir}/${package}-${version}/DEBIAN/"
 cp -pf "${debdir}/${debiandirmain}"/* "${debdir}/${package}-${version}/DEBIAN/"
 fakeroot dpkg-deb -b "${debdir}/${package}-${version}"
 
-mv "${debdir}/.git$$" "${debdir}/${package}-${version}/.git"
+cd "${debdir}/${package}-${version}"
+mv "../.git$$" .git; mv "../README.md$$" README.md
 
       ;;
    targz)

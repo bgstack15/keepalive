@@ -1,18 +1,16 @@
-#!/bin/sh
-
+# deb prerm 2017-01-26
 thisservice=keepalive.service
-
+{
 case "${1}" in
-   upgrade)
-      # This prerm upgrade is running because a newer version of this package is being installed.
-      # $2 is new-version-number
-      [ ]
-      ;;
    remove)
-      # No new package being installed. Just remove it.
-      systemctl stop "${thisservice}" 1>/dev/null 2>&1
-      systemctl disable "${thisservice}" 1>/dev/null 2>&1
+      # Final removal.
+      systemctl stop "${thisservice}"
+      systemctl disable "${thisservice}"
+      ;;
+   upgrade)
+      # Upgrade. $2 is new-version-number
+      :
       ;;
 esac
-
+} 1>/dev/null 2>&1
 exit 0 

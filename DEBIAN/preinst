@@ -1,17 +1,17 @@
 #!/bin/sh
+# deb pre 2017-01-26
 #https://www.debian.org/doc/debian-policy/ch-maintainerscripts.html
 thisservice=keepalive.service
-
+{
 case "${1}" in
    upgrade)
-      # This preinst is being run before an upgrade.
-      # $2 is old-version-number
-      systemctl stop keepalive.service 1>/dev/null 2>&1
+      # Upgrade. $2 is old-version-number.
+      systemctl stop ${thiservice}
       ;;
    install)
-      # Brand new installation of the package.
-      [ ]
+      # New install.
+      :
       ;;
 esac
-
+} 1>/dev/null 2>&1
 exit 0
